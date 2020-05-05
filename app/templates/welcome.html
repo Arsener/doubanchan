@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>doubanchan movie</title>
+</head>
+<body>
+
+<a href="{{ url_for('welcome.index') }}">doubanchan movie</a><br/>
+
+<form action="{{ url_for('movie.index') }}" method="POST">
+    <p><input type="text" name="movie_name"/></p>
+    <input type="submit" value="search movie"/>
+</form>
+
+<form action="{{ url_for('actor.index') }}" method="POST">
+    <p><input type="text" name="actor_name"/></p>
+    <input type="submit" value="search actor"/>
+</form>
+
+<form action="{{ url_for('summary.index') }}" method="POST">
+    <p><input type="text" name="summary"/></p>
+    <input type="submit" value="search summary"/>
+</form>
+
+</body>
+</html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>doubanchan movie</title>
+</head>
+<body>
+
+<a href="{{ url_for('welcome.index') }}">doubanchan movie</a><br/>
+
+movie name: {{ movie_name }}
+
+{% for i in l %}
+    <li>{{ i[0] }}</li>
+{% endfor %}
+
+</body>
+</html>
