@@ -11,8 +11,11 @@
 movie name: {{ movie_name }}
 
 {% for i in l %}
-    <li>{{ i[0] }}</li>
+    <li>{{ i[0] }} - {{ i[1] }} - {{ i[2] }}</li>
+    <img src="{{ url_for('movie.image', image_url=i[2]) }}">
+
 {% endfor %}
+
 
 </body>
 </html>
