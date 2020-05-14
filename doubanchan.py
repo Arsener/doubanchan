@@ -5,10 +5,11 @@ import pymysql
 from config import *
 
 db = None
+database_name = DB
 try:
-    db = pymysql.connect('localhost', 'root', PWD, DB, charset='utf8')
+    db = pymysql.connect('localhost', 'root', PWD, database_name, charset='utf8')
 except:
-    db = pymysql.connect('166.111.83.75', 'admin', PWD, DB, port=3306, charset='utf8')
+    db = pymysql.connect('166.111.83.75', 'admin', PWD, database_name, port=3306, charset='utf8')
 
 app = create_app('default')
 

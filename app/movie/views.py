@@ -1,6 +1,5 @@
 from . import movie
 from flask import request, Response, jsonify
-from ..db import get_db
 from doubanchan import db
 import requests
 
@@ -52,9 +51,56 @@ def top250():
 @movie.route('/subject')
 def subject():
     id = request.args.get('id')
-    db = get_db()
-    return ''
+    sql_movie = 'select * from movie where movie_id = %s'
+    sql_actor = '''
+        select actor.actor_id, actor_name 
+        from actor, act 
+        where actor.actor_id = act.actor_id and act.movie_id = %s
+    '''
+    sql_type = '''
+        select type_name 
+        from type, belongs_to 
+        where type.type_id = belongs_to.type_id and belongs_to.movie_id = %s
+    '''
+    sql_comments = '''
+        select content, date, rate, support
+        from comments
+        where movie_id = %s
+    '''
 
+    cur = db.cursor()
+    cur.execute(sql_movie, (id,))
+    movie = cur.fetchall()
+    if len(movie) == 0:
+        return jsonify({'status': -1})
+    data = dict()
+    data['status'] = 1
+    cols = ['movie_id', 'movie_name_cn', 'movie_name_ori', 'other_name', 'movie_country', 'date',
+            'year', 'length', 'language', 'summary', 'if_top', 'poster_url', 'db_rating', 'imdb_link',
+            'imdb_rating', 'my_rating', 'lfq_rating', 'meta_rating']
+    for c, d in zip(cols, movie[0]):
+        data[c] = d
+
+    cur.execute(sql_type, (id,))
+    types = cur.fetchall()
+    data['type'] = ' / '.join([t[0] for t in types])
+
+    cur.execute(sql_actor, (id,))
+    actors = cur.fetchall()
+    data['actors'] = [
+        {'actor_id': a[0],
+         'actor_name': a[1]}
+        for a in actors
+    ]
+
+    cur.execute(sql_comments, (id,))
+    comments = cur.fetchall()
+    data['comments'] = [
+        {'content': c[0], 'date': c[1], 'rate': c[2], 'support': c[3]}
+        for c in comments
+    ]
+
+    return jsonify(data)
 
 
 @movie.route('/image/', methods=['GET'])
