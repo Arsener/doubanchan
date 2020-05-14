@@ -13,14 +13,9 @@ def index():
 def top250():
     start = int(request.args.get('start'))
     count = int(request.args.get('count'))
-
-    if start == 1:
-        end = count * 2
-    elif start + count <= 250:
-        start += count
-        end = start + count
-    else:
+    if not 1 <= start <= 250:
         return jsonify({'status': -1})
+    end = start + count - 1
 
     sql = '''
         select movie_id, movie_name_cn, movie_country, year, if_top, poster_url, db_rating
@@ -38,7 +33,7 @@ def top250():
     data['status'] = 1
     data['start'] = start
     data['count'] = len(top)
-    movies = [
+    data['movies'] = [
         {'movie_id': t[0],
          'movie_name_cn': t[1],
          'movie_country': t[2],
@@ -48,10 +43,8 @@ def top250():
          'db_rating': t[6]}
         for t in top
     ]
-    data['movies'] = movies
 
     return jsonify(data)
-
 
 
 @movie.route('/image/', methods=['GET'])
