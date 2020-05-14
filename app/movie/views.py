@@ -1,6 +1,7 @@
 from . import movie
 from flask import request, Response, jsonify
 from ..db import get_db
+from doubanchan import db
 import requests
 
 
@@ -24,7 +25,7 @@ def top250():
         order by if_top
     '''
 
-    db = get_db()
+    # db = get_db()
     cur = db.cursor()
     cur.execute(sql, (start, end))
     top = cur.fetchall()
@@ -43,8 +44,17 @@ def top250():
          'db_rating': t[6]}
         for t in top
     ]
+    cur.close()
 
     return jsonify(data)
+
+
+@movie.route('/subject')
+def subject():
+    id = request.args.get('id')
+    db = get_db()
+    return ''
+
 
 
 @movie.route('/image/', methods=['GET'])

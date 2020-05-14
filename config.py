@@ -1,5 +1,11 @@
 import os
+
 basedir = os.path.abspath(os.path.dirname(__file__))
+
+BACKUP_DB = 'backup_doubanchan_movie'
+DB = 'doubanchan_movie'
+NEW_DB = 'new_doubanchan_movie'
+PWD = 'data@1234'
 
 
 class Config:
@@ -9,7 +15,7 @@ class Config:
     def init_app(app):
         pass
 
+
 config = {
     'default': Config,
 }
-
