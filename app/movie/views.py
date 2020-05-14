@@ -11,6 +11,7 @@ def index():
 
 @movie.route('/top250')
 def top250():
+    print(request.args.get('start'), request.args.get('count'))
     start = int(request.args.get('start'))
     count = int(request.args.get('count'))
     if not 1 <= start <= 250:
@@ -18,7 +19,7 @@ def top250():
     end = start + count - 1
 
     sql = '''
-        select movie_id, movie_name_cn, movie_country, year, if_top, poster_url, db_rating
+        select movie_id, movie_name_cn, movie_country, year, if_top, poster_url, db_rating, movie_name_ori
         from movie
         where if_top >= %s and if_top <= %s
         order by if_top
@@ -40,7 +41,8 @@ def top250():
          'year': t[3],
          'if_top': t[4],
          'poster_url': t[5],
-         'db_rating': t[6]}
+         'db_rating': t[6],
+         'movie_name_ori': t[7]}
         for t in top
     ]
     cur.close()
@@ -101,6 +103,16 @@ def subject():
     ]
 
     return jsonify(data)
+
+
+@movie.route('/area')
+def area():
+    return 'area'
+
+
+@movie.route('/type')
+def type_():
+    return 'type'
 
 
 @movie.route('/image/', methods=['GET'])
