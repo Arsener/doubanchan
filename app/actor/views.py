@@ -38,4 +38,3 @@ def index():
     ]
 
     return jsonify(data)
-    # return ''

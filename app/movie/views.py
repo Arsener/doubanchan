@@ -11,7 +11,11 @@ def index():
 
 @movie.route('/top250')
 def top250():
-    print(request.args.get('start'), request.args.get('count'))
+    # print(request.args.get('start'), request.args.get('count'))
+    # start = request.args.get('start')
+    # start = 1 if start is None else int(start)
+    # count = request.args.get('count')
+    # count = 10 if count is None else int(count)
     start = int(request.args.get('start'))
     count = int(request.args.get('count'))
     if not 1 <= start <= 250:

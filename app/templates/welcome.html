@@ -6,17 +6,7 @@
 </head>
 <body>
 
-<a href="{{ url_for('welcome.index') }}">doubanchan movie</a><br/>
-
-<form action="{{ url_for('movie.index') }}" method="POST">
-    <p><input type="text" name="movie_name"/></p>
-    <input type="submit" value="search movie"/>
-</form>
-
-<form action="{{ url_for('actor.index') }}" method="POST">
-    <p><input type="text" name="actor_name"/></p>
-    <input type="submit" value="search actor"/>
-</form>
+<h1>豆瓣酱电影API</h1>
 
 </body>
 </html>
