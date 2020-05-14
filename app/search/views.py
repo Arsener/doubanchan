@@ -1,6 +1,6 @@
-from . import summary
+from . import search
 from flask import render_template
 
-@summary.route('/')
+@search.route('/')
 def index():
     return render_template('welcome.html')

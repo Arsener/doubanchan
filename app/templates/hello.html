@@ -6,8 +6,8 @@
 </head>
 <body>
 
-<a href="{{ url_for('summary') }}">返回首页</a><br/>
-<form action="{{ url_for('summary') }}" method="POST">
+<a href="{{ url_for('search') }}">返回首页</a><br/>
+<form action="{{ url_for('search') }}" method="POST">
     <p>输入学号: <input type="text" name="student_id"/></p>
     <input type="submit" value="将此学生设置为管理员"/>
 </form>

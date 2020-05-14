@@ -1,15 +1,11 @@
 from flask import Flask
 from config import config
-from flask_bootstrap import Bootstrap
-
-bootstrap = Bootstrap()
 
 
 def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
-    bootstrap.init_app(app)
 
     from .welcome import welcome as welcome_blueprint
     app.register_blueprint(welcome_blueprint)
@@ -20,7 +16,7 @@ def create_app(config_name):
     from .actor import actor as actor_blueprint
     app.register_blueprint(actor_blueprint, url_prefix='/actor')
 
-    from .summary import summary as summary_blueprint
-    app.register_blueprint(summary_blueprint, url_prefix='/summary')
+    from .search import search as search_blueprint
+    app.register_blueprint(search_blueprint, url_prefix='/search')
 
     return app
