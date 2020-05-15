@@ -1,6 +1,7 @@
 from . import actor
-from flask import request, Response, jsonify
+from flask import request, jsonify
 from doubanchan import db
+
 
 @actor.route('/')
 def index():
