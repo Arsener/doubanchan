@@ -224,7 +224,7 @@ def type_():
     data['rankby'] = rank[rankby]
     cur.close()
 
-    return data
+    return jsonify(data)
 
 
 @movie.route('/image/', methods=['GET'])
