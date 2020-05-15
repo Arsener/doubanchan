@@ -12,6 +12,7 @@ def index():
         where act.actor_id = %s and act.movie_id = movie.movie_id
     '''
 
+    db.ping(reconnect=True)
     cur = db.cursor()
     cur.execute(sql_actor, (actor_id,))
     actor = cur.fetchall()
@@ -36,5 +37,6 @@ def index():
          'movie_name_ori': m[7]}
         for m in movies
     ]
+    cur.close()
 
     return jsonify(data)

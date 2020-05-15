@@ -11,12 +11,7 @@ def index():
 
 @movie.route('/top250')
 def top250():
-    # print(request.args.get('start'), request.args.get('count'))
-    # start = request.args.get('start')
-    # start = 1 if start is None else int(start)
-    # count = request.args.get('count')
-    # count = 10 if count is None else int(count)
-    start = int(request.args.get('start'))
+    start = int(request.args.get('start')) + 1
     count = int(request.args.get('count'))
     if not 1 <= start <= 250:
         return jsonify({'status': -1})
@@ -29,14 +24,14 @@ def top250():
         order by if_top
     '''
 
-    # db = get_db()
+    db.ping(reconnect=True)
     cur = db.cursor()
     cur.execute(sql, (start, end))
     top = cur.fetchall()
 
     data = dict()
     data['status'] = 1
-    data['start'] = start
+    data['start'] = start - 1
     data['count'] = len(top)
     data['movies'] = [
         {'movie_id': t[0],
@@ -56,7 +51,7 @@ def top250():
 
 @movie.route('/subject')
 def subject():
-    id = request.args.get('id')
+    movie_id = request.args.get('id')
     sql_movie = 'select * from movie where movie_id = %s'
     sql_actor = '''
         select actor.actor_id, actor_name 
@@ -74,8 +69,9 @@ def subject():
         where movie_id = %s
     '''
 
+    db.ping(reconnect=True)
     cur = db.cursor()
-    cur.execute(sql_movie, (id,))
+    cur.execute(sql_movie, (movie_id,))
     movie = cur.fetchall()
     if len(movie) == 0:
         return jsonify({'status': -1})
@@ -87,11 +83,11 @@ def subject():
     for c, d in zip(cols, movie[0]):
         data[c] = d
 
-    cur.execute(sql_type, (id,))
+    cur.execute(sql_type, (movie_id,))
     types = cur.fetchall()
     data['type'] = ' / '.join([t[0] for t in types])
 
-    cur.execute(sql_actor, (id,))
+    cur.execute(sql_actor, (movie_id,))
     actors = cur.fetchall()
     data['actors'] = [
         {'actor_id': a[0],
@@ -99,12 +95,17 @@ def subject():
         for a in actors
     ]
 
-    cur.execute(sql_comments, (id,))
+    cur.execute(sql_comments, (movie_id,))
     comments = cur.fetchall()
     data['comments'] = [
         {'content': c[0], 'date': c[1], 'rate': c[2], 'support': c[3]}
         for c in comments
     ]
+
+    data['imdb_rating'] = float(data['imdb_rating'].split('/')[0])
+    data['lfq_rating'] = int(data['lfq_rating'].split('%')[0])
+    data['meta_rating'] = int(data['meta_rating'].split('/')[0])
+    cur.close()
 
     return jsonify(data)
 
@@ -116,7 +117,47 @@ def area():
 
 @movie.route('/type')
 def type_():
-    return 'type'
+    rank = ['year', 'db_rating']
+    start = int(request.args.get('start'))
+    if start < 0:
+        return jsonify({'status': -1})
+
+    count = int(request.args.get('count'))
+    typeid = request.args.get('typeid')
+    rankby = int(request.args.get('rankby'))
+
+    sql = '''
+        select movie.movie_id, movie_name_cn, movie_country, year, if_top, poster_url, db_rating, movie_name_ori
+        from movie, belongs_to, type
+        where movie.movie_id = belongs_to.movie_id 
+            and belongs_to.type_id = type.type_id 
+            and type_name = '{}'
+        order by {} DESC
+    '''
+    cur = db.cursor()
+    cur.execute(sql.format(typeid, rank[rankby]))
+    movies = cur.fetchall()[start:start + count]
+
+    data = dict()
+    data['status'] = 1
+    data['start'] = start
+    data['count'] = len(movies)
+    data['movies'] = [
+        {'movie_id': m[0],
+         'movie_name_cn': m[1],
+         'movie_country': m[2],
+         'year': m[3],
+         'if_top': m[4],
+         'poster_url': m[5],
+         'db_rating': m[6],
+         'movie_name_ori': m[7]}
+        for m in movies
+    ]
+    data['type'] = typeid
+    data['rankby'] = rank[rankby]
+    cur.close()
+
+    return data
 
 
 @movie.route('/image/', methods=['GET'])
