@@ -33,7 +33,14 @@ def index():
 
         return jsonify(json.loads(requests.post(url, json.dumps(data), headers=HEADERS).text))
     elif tag == 2:  # 影人
-        pass
+        url = 'http://166.111.83.75:9200/actor/_search?size={}&from={}'.format(count, start)
+        data = {
+            "query": {
+                "match_phrase": {"actor_name.pinyin": query}
+            }
+        }
+
+        return jsonify(json.loads(requests.post(url, json.dumps(data), headers=HEADERS).text))
     elif tag == 3:  # 简介
         url = 'http://166.111.83.75:9200/movie/_search?size={}&from={}'.format(count, start)
         data = {
