@@ -179,7 +179,7 @@ def area():
     data['rankby'] = rank[rankby]
     cur.close()
 
-    return data
+    return jsonify(data)
 
 
 @movie.route('/type')
