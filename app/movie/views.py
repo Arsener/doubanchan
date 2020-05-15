@@ -112,7 +112,74 @@ def subject():
 
 @movie.route('/area')
 def area():
-    return 'area'
+    rank = ['year', 'db_rating']
+    start = int(request.args.get('start'))
+    if start < 0:
+        return jsonify({'status': -1})
+
+    count = int(request.args.get('count'))
+    areaid = int(request.args.get('areaid'))
+    rankby = int(request.args.get('rankby'))
+
+    cur = db.cursor()
+    sql = '''
+        select movie_id, movie_name_cn, movie_country, year, if_top, poster_url, db_rating, movie_name_ori
+        from movie
+    '''
+    if areaid == 1:
+        sql += '''
+            where language like '%汉语普通话%'
+                and movie_country like '%中国%'
+        '''
+    elif areaid == 2:
+        sql += '''
+            where movie_country like '%日本%'
+        '''
+    elif areaid == 3:
+        sql += '''
+            where movie_country like '%韩国%'
+        '''
+    elif areaid == 4:
+        sql += '''
+            where movie_country like '%美国%'
+                or movie_country like '%英国%'
+                or movie_country like '%德国%'
+                or movie_country like '%法国%'
+                or movie_country like '%意大利%'
+                or movie_country like '%西班牙%'
+                or movie_country like '%俄罗斯%'
+                or movie_country like '%荷兰%'
+                or movie_country like '%瑞典%'
+                or movie_country like '%丹麦%'
+        '''
+    else:
+        return jsonify({'status': -1})
+
+    sql += 'order by {} desc'
+
+    cur.execute(sql.format(rank[rankby],))
+    movies = cur.fetchall()[start:start + count]
+
+    data = dict()
+    data['status'] = 1
+    data['start'] = start
+    data['count'] = len(movies)
+    data['movies'] = [
+        {'movie_id': m[0],
+         'movie_name_cn': m[1],
+         'movie_country': m[2],
+         'year': m[3],
+         'if_top': m[4],
+         'poster_url': m[5],
+         'db_rating': m[6],
+         'movie_name_ori': m[7]}
+        for m in movies
+    ]
+    data['areaid'] = areaid
+    data['rankby'] = rank[rankby]
+    cur.close()
+
+    return data
 
 
 @movie.route('/type')
@@ -132,7 +199,7 @@ def type_():
         where movie.movie_id = belongs_to.movie_id 
             and belongs_to.type_id = type.type_id 
             and type_name = '{}'
-        order by {} DESC
+        order by {} desc
     '''
     cur = db.cursor()
     cur.execute(sql.format(typeid, rank[rankby]))
