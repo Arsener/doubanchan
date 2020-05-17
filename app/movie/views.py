@@ -11,27 +11,28 @@ def index():
 
 @movie.route('/top250')
 def top250():
-    start = int(request.args.get('start')) + 1
+    rank = ['year desc', 'if_top']
+    start = int(request.args.get('start'))
     count = int(request.args.get('count'))
-    if not 1 <= start <= 250:
+    rankby = int(request.args.get('rankby'))
+    if not 0 <= start < 250:
         return jsonify({'status': -1})
-    end = start + count - 1
 
     sql = '''
         select movie_id, movie_name_cn, movie_country, year, if_top, poster_url, db_rating, movie_name_ori
         from movie
-        where if_top >= %s and if_top <= %s
-        order by if_top
+        where if_top > 0
+        order by {}
     '''
 
     db.ping(reconnect=True)
     cur = db.cursor()
-    cur.execute(sql, (start, end))
-    top = cur.fetchall()
+    cur.execute(sql.format(rank[rankby]))
+    top = cur.fetchall()[start: start + count]
 
     data = dict()
     data['status'] = 1
-    data['start'] = start - 1
+    data['start'] = start
     data['count'] = len(top)
     data['movies'] = [
         {'movie_id': t[0],
@@ -44,6 +45,7 @@ def top250():
          'movie_name_ori': t[7]}
         for t in top
     ]
+    data['rankby'] = rankby
     cur.close()
 
     return jsonify(data)
@@ -157,7 +159,7 @@ def area():
 
     sql += 'order by {} desc'
 
-    cur.execute(sql.format(rank[rankby],))
+    cur.execute(sql.format(rank[rankby], ))
     movies = cur.fetchall()[start:start + count]
 
     data = dict()
