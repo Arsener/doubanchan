@@ -11,10 +11,13 @@ def index():
 
 @movie.route('/top250')
 def top250():
-    rank = ['year desc', 'if_top']
+    rank = ['if_top', 'year desc']
     start = int(request.args.get('start'))
     count = int(request.args.get('count'))
-    rankby = int(request.args.get('rankby'))
+    try:
+        rankby = int(request.args.get('rankby'))
+    except:
+        rankby = 0
     if not 0 <= start < 250:
         return jsonify({'status': -1})
 
@@ -121,7 +124,10 @@ def area():
 
     count = int(request.args.get('count'))
     areaid = int(request.args.get('areaid'))
-    rankby = int(request.args.get('rankby'))
+    try:
+        rankby = int(request.args.get('rankby'))
+    except:
+        rankby = 0
 
     cur = db.cursor()
     sql = '''
@@ -193,7 +199,10 @@ def type_():
 
     count = int(request.args.get('count'))
     typeid = request.args.get('typeid')
-    rankby = int(request.args.get('rankby'))
+    try:
+        rankby = int(request.args.get('rankby'))
+    except:
+        rankby = 0
 
     sql = '''
         select movie.movie_id, movie_name_cn, movie_country, year, if_top, poster_url, db_rating, movie_name_ori
