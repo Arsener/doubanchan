@@ -39,7 +39,7 @@ def index():
                 "multi_match": {
                     "query": query,
                     "fields": [
-                        "actor_name^100",
+                        "actor_name",
                         "actor_name.pinyin"
                     ]
                 }

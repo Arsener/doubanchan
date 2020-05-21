@@ -30,7 +30,9 @@ def index():
         return jsonify({'status': -1})
 
     cur.execute(sql_movies.format(rank[rankby]), (actor_id,))
-    movies = cur.fetchall()[start:start + count]
+    movies = cur.fetchall()
+    total = len(movies)
+    movies = movies[start:start + count]
 
     data = dict()
     data['status'] = 1
@@ -51,6 +53,7 @@ def index():
         for m in movies
     ]
     data['rankby'] = rank[rankby]
+    data['total'] = total
     cur.close()
 
     return jsonify(data)

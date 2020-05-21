@@ -49,6 +49,7 @@ def top250():
         for t in top
     ]
     data['rankby'] = rankby
+    data['total'] = 250
     cur.close()
 
     return jsonify(data)
@@ -166,7 +167,9 @@ def area():
     sql += 'order by {} desc'
 
     cur.execute(sql.format(rank[rankby], ))
-    movies = cur.fetchall()[start:start + count]
+    movies = cur.fetchall()
+    total = len(movies)
+    movies = movies[start:start + count]
 
     data = dict()
     data['status'] = 1
@@ -185,6 +188,7 @@ def area():
     ]
     data['areaid'] = areaid
     data['rankby'] = rank[rankby]
+    data['total'] = total
     cur.close()
 
     return jsonify(data)
@@ -214,7 +218,9 @@ def type_():
     '''
     cur = db.cursor()
     cur.execute(sql.format(typeid, rank[rankby]))
-    movies = cur.fetchall()[start:start + count]
+    movies = cur.fetchall()
+    total = len(movies)
+    movies = movies[start:start + count]
 
     data = dict()
     data['status'] = 1
@@ -233,6 +239,7 @@ def type_():
     ]
     data['type'] = typeid
     data['rankby'] = rank[rankby]
+    data['total'] = total
     cur.close()
 
     return jsonify(data)
