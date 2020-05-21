@@ -118,7 +118,7 @@ def subject():
 
 @movie.route('/area')
 def area():
-    rank = ['year', 'db_rating']
+    rank = ['db_rating', 'year']
     start = int(request.args.get('start'))
     if start < 0:
         return jsonify({'status': -1})
@@ -196,7 +196,7 @@ def area():
 
 @movie.route('/type')
 def type_():
-    rank = ['year', 'db_rating']
+    rank = ['db_rating', 'year']
     start = int(request.args.get('start'))
     if start < 0:
         return jsonify({'status': -1})

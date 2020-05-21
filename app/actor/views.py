@@ -12,7 +12,10 @@ def index():
         return jsonify({'status': -1})
 
     count = int(request.args.get('count'))
-    rankby = int(request.args.get('rankby'))
+    try:
+        rankby = int(request.args.get('rankby'))
+    except:
+        rankby = 0
 
     sql_actor = 'select actor_name from actor where actor_id = %s'
     sql_movies = '''
