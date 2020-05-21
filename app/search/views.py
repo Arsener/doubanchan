@@ -36,7 +36,13 @@ def index():
         url = 'http://166.111.83.75:9200/actor/_search?size={}&from={}'.format(count, start)
         data = {
             "query": {
-                "match_phrase": {"actor_name.pinyin": query}
+                "multi_match": {
+                    "query": query,
+                    "fields": [
+                        "actor_name^100",
+                        "actor_name.pinyin"
+                    ]
+                }
             }
         }
 
